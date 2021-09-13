@@ -14,10 +14,10 @@ export function publish(contents: string, parsedFrontMatter: any) {
 		body: JSON.stringify({
 			article: {
 				title: parsedFrontMatter.title,
-				body_markdown: contents, 
-				pulished: true, 
+				body_markdown: contents,
+				pulished: true,
 				description: 'Testing 123'
 			}
 		})
-	})
+	}).then(res => res.json()).then(console.log)
 }
