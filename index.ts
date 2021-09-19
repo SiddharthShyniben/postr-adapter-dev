@@ -1,23 +1,53 @@
-let apiKey: string | null = null;
+export async function publish(
+	contents: string,
+	frontMatter: {[prop: string]: any},
+	{apiKey}: {apiKey: string}
+) {
+	const headers =  new Headers();
 
-export function init(config: {apiKey: string}) {
-	apiKey = config.apiKey;
-}
+	if (!apiKey) throw new ReferenceError('No API key was provided');
 
-export function publish(contents: string, parsedFrontMatter: any) {
-	fetch('https://dev.to/api/articles', {
+	headers.append('Content-Type', 'application/json');
+	headers.append('api-key', apiKey ?? '');
+
+	const res = await fetch('https://dev.to/api/articles', {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'api-key': apiKey
-		},
+		headers,
 		body: JSON.stringify({
 			article: {
-				title: parsedFrontMatter.title,
+				title: frontMatter?.title ?? '',
 				body_markdown: contents,
-				pulished: true,
-				description: 'Testing 123'
+				published: true,
+				description: frontMatter?.description ?? ''
 			}
 		})
-	}).then(res => res.json()).then(console.log)
+	}).then(res => res.json());
+
+	console.log(res)
+}
+
+export async function update(
+	contents: string, frontMatter: {[prop: string]: any}, {apiKey}: {apiKey: string}
+) {
+	const headers =  new Headers();
+
+	if (!apiKey) throw new ReferenceError('No API key was provided');
+
+	headers.append('Content-Type', 'application/json');
+	headers.append('api-key', apiKey ?? '');
+
+	const res = await fetch('https://dev.to/api/articles', {
+		method: 'POST',
+		headers,
+		body: JSON.stringify({
+			article: {
+				title: frontMatter?.title ?? '',
+				body_markdown: contents,
+				published: true,
+				description: frontMatter?.description ?? ''
+			}
+		})
+	}).then(res => res.json());
+
+	return res;
 }
